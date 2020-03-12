@@ -1,2 +1,2 @@
 # basic-redux
-Proyecto con ejemplos explicativos del patrón redux usado en dicha librería.
+Project with explanatory examples of the redux pattern used in that library.
