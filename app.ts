@@ -1,9 +1,32 @@
 
+// STORE
+export interface Reducer<T> {
+  (state: T, action: Action ): T
+}
+
+export class Store<T> {
+
+  constructor(
+      private reducer: Reducer<T>,
+      private state: T
+  ) {}
+
+  getState(): T {
+    return this.state;
+  }
+
+  dispatch(action: Action): void {
+    this.state = this.reducer(this.state, action);
+  }
+}
+
+
 // ACTION TYPE
 interface Action {
   type: string;
   payload?: any;
 }
+
 
 // ACTIONS
 const increaseAction: Action = {
@@ -24,6 +47,10 @@ const divideAction: Action = {
   payload: 2
 }
 
+const resetAction: Action = {
+  type: 'RESET'
+}
+
 
 // REDUCER
 function counterReducer(state, action: Action): number {
@@ -37,14 +64,29 @@ function counterReducer(state, action: Action): number {
       return state * action.payload;
     case 'DIVIDE':
       return state / action.payload;
+    case 'RESET':
+      return state;
     default:
       return state;
   }
 
 }
 
+
 // APP
-console.log(counterReducer(10, increaseAction));  // 11
-console.log(counterReducer(10, decreaseAction));  // 9
-console.log(counterReducer(10, multiplyAction));  // 20
-console.log(counterReducer(10, divideAction));    // 5
+const store = new Store(counterReducer, 10);
+
+store.dispatch(increaseAction);
+console.log(store.getState()); // 11
+
+store.dispatch(decreaseAction);
+console.log(store.getState()); // 10
+
+store.dispatch(multiplyAction);
+console.log(store.getState()); // 20
+
+store.dispatch(divideAction);
+console.log(store.getState()); // 10
+
+store.dispatch(resetAction);
+console.log(store.getState()); // 10
