@@ -1,25 +1,4 @@
-
-// STORE
-export interface Reducer<T> {
-  (state: T, action: Action ): T
-}
-
-export class Store<T> {
-
-  constructor(
-      private reducer: Reducer<T>,
-      private state: T
-  ) {}
-
-  getState(): T {
-    return this.state;
-  }
-
-  dispatch(action: Action): void {
-    this.state = this.reducer(this.state, action);
-  }
-}
-
+import { createStore, Store } from 'redux';
 
 // ACTION TYPE
 interface Action {
@@ -53,7 +32,7 @@ const resetAction: Action = {
 
 
 // REDUCER
-function counterReducer(state, action: Action): number {
+function counterReducer(state = 10, action: Action): number {
 
   switch (action.type) {
     case 'INCREASE':
@@ -69,24 +48,18 @@ function counterReducer(state, action: Action): number {
     default:
       return state;
   }
-
 }
 
 
 // APP
-const store = new Store(counterReducer, 10);
+const store: Store = createStore(counterReducer);
 
-store.dispatch(increaseAction);
-console.log(store.getState()); // 11
+store.subscribe(() => {
+  console.log('Subscription: ', store.getState());
+})
 
-store.dispatch(decreaseAction);
-console.log(store.getState()); // 10
-
-store.dispatch(multiplyAction);
-console.log(store.getState()); // 20
-
-store.dispatch(divideAction);
-console.log(store.getState()); // 10
-
-store.dispatch(resetAction);
-console.log(store.getState()); // 10
+store.dispatch(increaseAction); // 11
+store.dispatch(decreaseAction); // 10
+store.dispatch(multiplyAction); // 20
+store.dispatch(divideAction);   // 10
+store.dispatch(resetAction);    // 10
